@@ -17,7 +17,7 @@ public class DAO {
     Connection dbConn = null;
     String driverUrl = "jdbc:mysql://localhost:3306/records_db?autoReconnect=true&useSSL=false";
     String id = "root";
-    String password = "ip&a42ZRFxdbb7";
+    String password = new Credentials().getDBPassword();
     //default constructor
     public DAO() {}
     /*
