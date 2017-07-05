@@ -15,9 +15,10 @@ public class DAO {
      * Declare Objects/Vars/Constructors
      */
     Connection dbConn = null;
-    String driverUrl = "jdbc:mysql://localhost:3306/records_db?autoReconnect=true&useSSL=false";
-    String id = "root";
-    String password = new Credentials().getDBPassword();
+    Credentials credentials = new Credentials();
+    String driverUrl = credentials.getUrl();
+    String id = credentials.getUserId();
+    String password = credentials.getDBPassword();
     //default constructor
     public DAO() {}
     /*
