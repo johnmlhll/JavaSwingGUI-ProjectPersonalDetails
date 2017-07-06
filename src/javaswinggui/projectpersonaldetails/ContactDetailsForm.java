@@ -1,8 +1,6 @@
 package javaswinggui.projectpersonaldetails;
 import enumerations.RecordStatus;
 import sql.DataProcessing;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.*;
 import java.awt.Component;
 import java.awt.event.ActionListener;
@@ -29,6 +27,7 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
     private JButton btnSave;
     public JFrame frameContactDetails;
     private DataProcessing dataProcessing;
+    private boolean badRecord = false;
     
     //declare objs
     DataValidation validate = new DataValidation();
@@ -37,8 +36,7 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
      * First stack is details from prior form entered relating to the record
      * Second stack is the new contact details for entry
      */
-    public ContactDetailsForm()
-    {
+    public ContactDetailsForm() {
         GridLayout contactStack = new GridLayout(0,2); //houses form panels
         JPanel pnlPersonalDetails = new JPanel();
         try
@@ -115,11 +113,23 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
         frameContactDetails.setVisible(true);
     }
     /*
+     * Getters & Setters
+     */
+    //setters
+    public void setBadRecord(boolean badRecord) {
+        this.badRecord = badRecord;
+    }
+    //getters
+    public boolean getBadRecord() {
+        return badRecord;
+    }
+    /*
      * Method 1 - Action Event - action event listeners attached to the buttons on the forms
      */
     @Override
     public void actionPerformed(ActionEvent ap) {
         if(ap.getSource() == btnBack) {
+            setBadRecord(false);
             JOptionPane.showMessageDialog(null, "Any data saved in memory for this record will "
                     + "be lost", "System Notice", JOptionPane.INFORMATION_MESSAGE);
             new PersonalDetailsForm();
@@ -130,16 +140,32 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
             System.exit(0);
         }
         else if(ap.getSource() == btnSave) {
+            setBadRecord(false);
             String email = txtEmail.getText();
-            if(!validate.validateEmailAddress(email)) { email = "Invalid Email Address"; }
+            if(!validate.validateEmailAddress(email)) { 
+                email = "Invalid Email Address"; 
+                setBadRecord(true);
+            }
             String contactNumber = txtContactNumber.getText();
-            if(!validate.validatePhoneNumber(contactNumber)){contactNumber = "Invalid Contact Number";}
+            if(!validate.validatePhoneNumber(contactNumber)){
+                contactNumber = "Invalid Contact Number";
+                setBadRecord(true);
+            }
             String mobileNumber = txtMobileNumber.getText();
-            if(!validate.validatePhoneNumber(mobileNumber)){mobileNumber = "Invalid Mobile Number";}
+            if(!validate.validatePhoneNumber(mobileNumber)){
+                mobileNumber = "Invalid Mobile Number";
+                setBadRecord(true);
+            }
             String skypeHandle = txtSkypeHandle.getText();
-            if(!validate.validateFieldLength(skypeHandle, 15)){skypeHandle = skypeHandle.substring(0,15);}
+            if(!validate.validateFieldLength(skypeHandle, 15)){
+                skypeHandle = skypeHandle.substring(0,15);
+                setBadRecord(true);
+            }
             String twitterHandle = txtTwitterHandle.getText();
-            if(!validate.validateFieldLength(twitterHandle, 15)){twitterHandle = twitterHandle.substring(0,15);}
+            if(!validate.validateFieldLength(twitterHandle, 15)){
+                twitterHandle = twitterHandle.substring(0,15);
+                setBadRecord(true);
+            }
             String recordStatus = String.valueOf(cboRecordStatus.getSelectedItem());
             //append to static list for saving
             PersonalDetailsForm.formDetailsList.add(email);
@@ -150,17 +176,19 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
             PersonalDetailsForm.formDetailsList.add(recordStatus);
             //Dev Note: MySql implementation starts here!
             dataProcessing = new DataProcessing();
-            if(dataProcessing.insertRecordToDB(formDetailsList)) {
-                JOptionPane.showMessageDialog(null, "Record Saved to Database", 
-                        "Success", JOptionPane.INFORMATION_MESSAGE);
-                //New Entry or Exit dialog to complete progam cycle
-                int option = JOptionPane.showConfirmDialog(null,"Transaction Completed - Do you want to "
-                        + "enter another record?");
-                if(option == JOptionPane.YES_OPTION) {
-                    new PersonalDetailsForm();
-                }
-                else {
-                    System.exit(0);       
+            if(getBadRecord() == false) {
+                if(dataProcessing.insertRecordToDB(formDetailsList)) {
+                    JOptionPane.showMessageDialog(null, "Record Saved to Database", 
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
+                    //New Entry or Exit dialog to complete progam cycle
+                    int option = JOptionPane.showConfirmDialog(null,"Transaction Completed - Do you want to "
+                            + "enter another record?");
+                    if(option == JOptionPane.YES_OPTION) {
+                        new PersonalDetailsForm();
+                    }
+                    else {
+                        System.exit(0);       
+                    }
                 }
             }
             else {
