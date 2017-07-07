@@ -46,6 +46,8 @@ public class PersonalDetailsForm extends JFrame implements ActionListener {
     final private JButton btnSearch;
     //frame
     private JFrame framePersonalDetails;
+    //input vars
+    private String dbQueryVar;
     /*
      * Noargs constructor with GUI declaration and configuration
      */
@@ -111,6 +113,7 @@ public class PersonalDetailsForm extends JFrame implements ActionListener {
         btnSubmit.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnSubmit.addActionListener(this);
         btnAddRecord = new JButton("Add Record");
+        btnAddRecord.setEnabled(false);
         btnAddRecord.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnAddRecord.addActionListener(this);
         btnSearch = new JButton("Search Records");
@@ -188,6 +191,7 @@ public class PersonalDetailsForm extends JFrame implements ActionListener {
             txtCity.setText("");
             txtPostCode.setText("");
             txtCountry.setText("");
+            btnAddRecord.setEnabled(true);
         }
         else if(ae.getSource() == btnAddRecord) {
             new ContactDetailsForm();
@@ -208,8 +212,8 @@ public class PersonalDetailsForm extends JFrame implements ActionListener {
             }
         }
         else if(ae.getSource() == btnSearch) {
-            new RecordDisplay();
-            //Dev Note: NEEDS REVISION as placeholder in place
+            dbQueryVar = JOptionPane.showInputDialog(null, "Please Enter the Last/Family Name you wish to search for");
+            new RecordDisplay(dbQueryVar);
             framePersonalDetails.dispatchEvent(new WindowEvent(framePersonalDetails, WindowEvent.WINDOW_LOST_FOCUS));
         }
     }

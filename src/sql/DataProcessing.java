@@ -69,7 +69,32 @@ public class DataProcessing extends DAO {
      */
     public ResultSet getRecordFromDB(String lastName) {
         ResultSet result = null;
-        //Implement
+        String uspGetResults = "{ CALL usp_find_recordby_lastname(?) }";
+        try {
+            CallableStatement getRecords = openConnection().prepareCall(uspGetResults);
+            getRecords.setString(1, lastName);
+            result = getRecords.executeQuery();
+        }
+        catch(SQLException sql) {
+            JOptionPane.showMessageDialog(null, "Something went wrong with data retrieval from the database."
+                   + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
+        }
+        return result;
+    }
+    /*
+     * Method 3 - search method - return all records from DB (limit 500 descending by last_name)
+     */
+    public ResultSet getAllRecordsFromDB() {
+        ResultSet result = null;
+        String uspRetrieveAllRecords = "{ CALL usp_retrieve_all_records() }";
+        try {
+            CallableStatement getAllRecords = openConnection().prepareCall(uspRetrieveAllRecords);
+            result = getAllRecords.executeQuery();
+        }
+        catch(SQLException sql) {
+            JOptionPane.showMessageDialog(null, "Something went wrong with data retrieval from the database."
+                   + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
+        }
         return result;
     }
 }
