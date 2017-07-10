@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class Definition: to handle the data connection with the database 
+ * DAO Class Definition: to handle the data connection with the database 
  * @author jmulhall
  */
 public class DAO {

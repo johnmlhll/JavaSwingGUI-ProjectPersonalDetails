@@ -7,7 +7,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
- * Class Definition: to insert data to the database
+ * DataProcessing Class Definition: to insert data to the database
  * @author jmulhall
  */
 public class DataProcessing extends DAO {
@@ -18,7 +18,7 @@ public class DataProcessing extends DAO {
         //local var declaration
         boolean validInsert = false;
         String uspInsertRecord = "{CALL usp_insert_record(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-   
+        //extract list values
         String firstName = record.get(0).toString();
         String lastName = record.get(1).toString();
         String dateOfBirth = record.get(2).toString();

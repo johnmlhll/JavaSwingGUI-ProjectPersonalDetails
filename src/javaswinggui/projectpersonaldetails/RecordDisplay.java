@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import sql.DataProcessing;
 
 /**
- * Class Definition: to Process the Search Results by last name from Database
+ * Record Display Class Definition: to Process the Search Results by last name from Database
  * btnBack to screen via results form
  * @author jmulhall
  */
@@ -100,20 +100,6 @@ public class RecordDisplay extends JFrame implements ActionListener {
           JOptionPane.showMessageDialog(null, "Something went wrong displaying records from the database."
                    + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-    /*
-     * Getters & Setters
-     */
-    //setters 
-    public void setColumnCount(int columnCount) {
-        this.columnCount = columnCount;
-    }
-    //getters
-    public int getRowCount() {
-        return rowCount;
-    }
-    public int getColumnCount() {
-        return columnCount;
     }
     /*
      * Method 1 - Event Listener for btnBack button

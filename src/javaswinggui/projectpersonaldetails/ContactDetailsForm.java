@@ -9,7 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 
 /**
- * Class Definition: to Process the Contact Details of a general entry (person)
+ * Contact Details Class Definition: to Process the Contact Details of a general entry (person)
  * This class extends PersonalDetailsForm in a "has a" composite relationship
  * @author jmulhall
  */
@@ -31,12 +31,27 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
     
     //declare objs
     DataValidation validate = new DataValidation();
+    /**
+     * No Args Constructor 
+     */
+    public ContactDetailsForm(){}
     /*
-     * No Args Constructor - used to set up the form as a two stack layout  
+     * Getters & Setters
+     */
+    //setters
+    public void setBadRecord(boolean badRecord) {
+        this.badRecord = badRecord;
+    }
+    //getters
+    public boolean getBadRecord() {
+        return badRecord;
+    }
+    /*
+     * Method 1 - Process method - used to set up the form as a two stack layout  
      * First stack is details from prior form entered relating to the record
      * Second stack is the new contact details for entry
      */
-    public ContactDetailsForm() {
+    public void runContactForm() {
         GridLayout contactStack = new GridLayout(0,2); //houses form panels
         JPanel pnlPersonalDetails = new JPanel();
         try
@@ -113,18 +128,7 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
         frameContactDetails.setVisible(true);
     }
     /*
-     * Getters & Setters
-     */
-    //setters
-    public void setBadRecord(boolean badRecord) {
-        this.badRecord = badRecord;
-    }
-    //getters
-    public boolean getBadRecord() {
-        return badRecord;
-    }
-    /*
-     * Method 1 - Action Event - action event listeners attached to the buttons on the forms
+     * Method 2 - Action Event - action event listeners attached to the buttons on the forms
      */
     @Override
     public void actionPerformed(ActionEvent ap) {
@@ -182,9 +186,9 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
                             "Success", JOptionPane.INFORMATION_MESSAGE);
                     //New Entry or Exit dialog to complete progam cycle
                     int option = JOptionPane.showConfirmDialog(null,"Transaction Completed - Do you want to "
-                            + "enter another record?");
+                            + "start another transaction?");
                     if(option == JOptionPane.YES_OPTION) {
-                        new PersonalDetailsForm();
+                        new PersonalDetailsForm().runPersonalDetailsForm();
                     }
                     else {
                         System.exit(0);       
@@ -195,7 +199,7 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
                 int option = JOptionPane.showConfirmDialog(null,"Transaction Failed to Save to Database - "
                         + "Do you want to try again");
                 if(option == JOptionPane.YES_OPTION) {
-                    new PersonalDetailsForm();
+                    new PersonalDetailsForm().runPersonalDetailsForm();
                 }
                 else {
                     System.exit(0);       

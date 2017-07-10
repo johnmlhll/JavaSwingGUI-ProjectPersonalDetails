@@ -8,8 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class Definition; to validate loosely structured data fields in the application
- * to defined data format standards
+ * Data Validation Class Definition; to validate loosely structured data fields 
+ * in the application to defined data format standards
  * @author jmulhall
  */
 public class DataValidation {
