@@ -45,6 +45,7 @@ public class DAO {
         try {
             if(dbConn.isValid(0)) {
                 dbConn.close();
+                System.out.println("The database connection is now closed");
             }
         } catch (SQLException ex) {
             Logger.getLogger(DAO.class.getName()).log(Level.SEVERE, null, ex);

@@ -57,8 +57,7 @@ public class DataProcessing extends DAO {
                validInsert = true;
            }
            closeConnection();
-        }
-        catch(SQLException sql) {
+        } catch(SQLException sql) {
            JOptionPane.showMessageDialog(null, "Something went wrong with the save to the database."
                    + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -74,8 +73,7 @@ public class DataProcessing extends DAO {
             CallableStatement getRecords = openConnection().prepareCall(uspGetResults);
             getRecords.setString(1, lastName);
             result = getRecords.executeQuery();
-        }
-        catch(SQLException sql) {
+        } catch(SQLException sql) {
             JOptionPane.showMessageDialog(null, "Something went wrong with data retrieval from the database."
                    + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -90,11 +88,70 @@ public class DataProcessing extends DAO {
         try {
             CallableStatement getAllRecords = openConnection().prepareCall(uspRetrieveAllRecords);
             result = getAllRecords.executeQuery();
-        }
-        catch(SQLException sql) {
+        } catch(SQLException sql) {
             JOptionPane.showMessageDialog(null, "Something went wrong with data retrieval from the database."
                    + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
         }
         return result;
+    }
+    /*
+     * Method 4 - Validate that record for saving is not already in the database checking
+     * firstName, lastName and dateOfBirth
+     */
+    public ResultSet checkForDuplicateInDB(String firstName, String lastName, 
+            String dateOfBirth, String county) {
+        ResultSet result = null;
+        String uspCheckRecord = "{ CALL usp_check_duplicate_set(?,?,?,?) }";
+        try{
+            CallableStatement checkDB = openConnection().prepareCall(uspCheckRecord);
+            checkDB.setString(1, firstName);
+            checkDB.setString(2, lastName);
+            checkDB.setString(3, dateOfBirth);
+            checkDB.setString(4, county);
+            result = checkDB.executeQuery();
+        } catch(SQLException sql) {
+            JOptionPane.showMessageDialog(null, "Something went wrong with data retrieval from the database."
+                   + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
+        }
+        return result;
+    }
+    /*
+     * Method 5 - Delete record based on record id
+     */
+    public boolean deleteRecord(int recordId) {
+        boolean success = false;
+        String uspDeleteRecord = "CALL usp_delete_record(?)";
+        ResultSet result = null;
+        try {
+            CallableStatement deleteRecord = openConnection().prepareCall(uspDeleteRecord);
+            deleteRecord.setInt(1, recordId);
+            result = deleteRecord.executeQuery();
+            if(result != null) {
+                success = true;
+            }        
+        } catch(SQLException sql) {
+            JOptionPane.showMessageDialog(null, "Something went wrong deleting the record from the database. "
+                    + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.ERROR_MESSAGE);
+        }
+        return success;
+    }
+    
+    /*
+     * Method 6 - Get Record Id based on first name, last name and county
+     */
+    public ResultSet getRecordID(String firstName, String lastName, String county) {
+     ResultSet result = null;
+     String uspGetRecordId = "{ CALL usp_get_recordid(?,?,?) }";
+     try {
+         CallableStatement getRecordId = openConnection().prepareCall(uspGetRecordId);
+         getRecordId.setString(1, firstName);
+         getRecordId.setString(2, lastName);
+         getRecordId.setString(3, county);
+         result = getRecordId.executeQuery();
+     } catch(SQLException sql) {
+        JOptionPane.showMessageDialog(null, "Something went wrong getting the record id from the database. "
+                    + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.ERROR_MESSAGE);
+     }
+     return result;
     }
 }

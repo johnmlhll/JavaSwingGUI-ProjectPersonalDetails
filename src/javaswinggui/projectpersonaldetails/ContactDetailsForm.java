@@ -7,6 +7,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Contact Details Class Definition: to Process the Contact Details of a general entry (person)
@@ -28,7 +32,9 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
     public JFrame frameContactDetails;
     private DataProcessing dataProcessing;
     private boolean badRecord = false;
-    
+    //validation vars declarations
+    private String firstName, lastName, dateOfBirth, county;
+    private ResultSet checkDB = null;
     //declare objs
     DataValidation validate = new DataValidation();
     /**
@@ -58,26 +64,25 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
         {
             pnlPersonalDetails.setLayout(contactStack);
             pnlPersonalDetails.add(new JLabel("FirstName "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(0)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(0)));
             pnlPersonalDetails.add(new JLabel("Surname "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(1)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(1)));
             pnlPersonalDetails.add(new JLabel("Date of Birth "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(2)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(2)));
             pnlPersonalDetails.add(new JLabel("Street Address "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(3)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(3)));
             pnlPersonalDetails.add(new JLabel("Area "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(4)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(4)));
             pnlPersonalDetails.add(new JLabel("City "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(5)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(5)));
             pnlPersonalDetails.add(new JLabel("County "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(6)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(6)));
             pnlPersonalDetails.add(new JLabel("Post Code"));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(7)));
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(7)));
             pnlPersonalDetails.add(new JLabel("Country "));
-            pnlPersonalDetails.add(new JLabel(super.formDetailsList.get(8)));     
-        }
-         catch(NullPointerException ne) {
-                JOptionPane.showMessageDialog(null, "Error: No Data Inputted, Please Try Again"
+            pnlPersonalDetails.add(new JLabel(formDetailsList.get(8)));     
+        } catch(NullPointerException ne) {
+                JOptionPane.showMessageDialog(null, "Error: No Data Inputted, Exiting Application..."
                         + "", "System Notice", JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
         }
@@ -136,74 +141,84 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
             setBadRecord(false);
             JOptionPane.showMessageDialog(null, "Any data saved in memory for this record will "
                     + "be lost", "System Notice", JOptionPane.INFORMATION_MESSAGE);
-            new PersonalDetailsForm();
-            super.formDetailsList.clear();
+            new PersonalDetailsForm().runPersonalDetailsForm();
+            formDetailsList.clear();
             frameContactDetails.dispatchEvent(new WindowEvent(frameContactDetails, WindowEvent.WINDOW_LOST_FOCUS));
-        }       
-        else if(ap.getSource() == btnExit) {
+        } else if(ap.getSource() == btnExit) {
             System.exit(0);
-        }
-        else if(ap.getSource() == btnSave) {
-            setBadRecord(false);
-            String email = txtEmail.getText();
-            if(!validate.validateEmailAddress(email)) { 
-                email = "Invalid Email Address"; 
-                setBadRecord(true);
-            }
-            String contactNumber = txtContactNumber.getText();
-            if(!validate.validatePhoneNumber(contactNumber)){
-                contactNumber = "Invalid Contact Number";
-                setBadRecord(true);
-            }
-            String mobileNumber = txtMobileNumber.getText();
-            if(!validate.validatePhoneNumber(mobileNumber)){
-                mobileNumber = "Invalid Mobile Number";
-                setBadRecord(true);
-            }
-            String skypeHandle = txtSkypeHandle.getText();
-            if(!validate.validateFieldLength(skypeHandle, 15)){
-                skypeHandle = skypeHandle.substring(0,15);
-                setBadRecord(true);
-            }
-            String twitterHandle = txtTwitterHandle.getText();
-            if(!validate.validateFieldLength(twitterHandle, 15)){
-                twitterHandle = twitterHandle.substring(0,15);
-                setBadRecord(true);
-            }
-            String recordStatus = String.valueOf(cboRecordStatus.getSelectedItem());
-            //append to static list for saving
-            PersonalDetailsForm.formDetailsList.add(email);
-            PersonalDetailsForm.formDetailsList.add(contactNumber);
-            PersonalDetailsForm.formDetailsList.add(mobileNumber);
-            PersonalDetailsForm.formDetailsList.add(skypeHandle);
-            PersonalDetailsForm.formDetailsList.add(twitterHandle);
-            PersonalDetailsForm.formDetailsList.add(recordStatus);
-            //Dev Note: MySql implementation starts here!
-            dataProcessing = new DataProcessing();
-            if(getBadRecord() == false) {
-                if(dataProcessing.insertRecordToDB(formDetailsList)) {
-                    JOptionPane.showMessageDialog(null, "Record Saved to Database", 
-                            "Success", JOptionPane.INFORMATION_MESSAGE);
-                    //New Entry or Exit dialog to complete progam cycle
-                    int option = JOptionPane.showConfirmDialog(null,"Transaction Completed - Do you want to "
-                            + "start another transaction?");
+        } else if(ap.getSource() == btnSave) {
+            try {
+                setBadRecord(false);
+                String email = txtEmail.getText();
+                if(!validate.validateEmailAddress(email)) {
+                    email = "Invalid Email Address";
+                    setBadRecord(true);
+                }
+                String contactNumber = txtContactNumber.getText();
+                if(!validate.validatePhoneNumber(contactNumber)){
+                    contactNumber = "Invalid Contact Number";
+                    setBadRecord(true);
+                }
+                String mobileNumber = txtMobileNumber.getText();
+                if(!validate.validatePhoneNumber(mobileNumber)){
+                    mobileNumber = "Invalid Mobile Number";
+                    setBadRecord(true);
+                }
+                String skypeHandle = txtSkypeHandle.getText();
+                if(!validate.validateFieldLength(skypeHandle, 15)){
+                    skypeHandle = skypeHandle.substring(0,15);
+                    setBadRecord(true);
+                }
+                String twitterHandle = txtTwitterHandle.getText();
+                if(!validate.validateFieldLength(twitterHandle, 15)){
+                    twitterHandle = twitterHandle.substring(0,15);
+                    setBadRecord(true);
+                }
+                String recordStatus = String.valueOf(cboRecordStatus.getSelectedItem());
+                //append to static list for saving
+                PersonalDetailsForm.formDetailsList.add(email);
+                PersonalDetailsForm.formDetailsList.add(contactNumber);
+                PersonalDetailsForm.formDetailsList.add(mobileNumber);
+                PersonalDetailsForm.formDetailsList.add(skypeHandle);
+                PersonalDetailsForm.formDetailsList.add(twitterHandle);
+                PersonalDetailsForm.formDetailsList.add(recordStatus);
+                //Check record entry against contacts details in records_db for duplicates
+                dataProcessing = new DataProcessing();
+                firstName = formDetailsList.get(0);
+                lastName = formDetailsList.get(1);
+                dateOfBirth = formDetailsList.get(2);
+                county = formDetailsList.get(6);
+                checkDB = dataProcessing.checkForDuplicateInDB(firstName, lastName, dateOfBirth, county);
+                if(checkDB.first()) {
+                        setBadRecord(true);
+                }    
+                if(getBadRecord() == false) {
+                    if(dataProcessing.insertRecordToDB(formDetailsList)) {
+                        JOptionPane.showMessageDialog(null, "Record Saved to Database",
+                                "Success", JOptionPane.INFORMATION_MESSAGE);
+                        //New Entry or Exit dialog to complete progam cycle
+                        int option = JOptionPane.showConfirmDialog(null,"Transaction Completed - Do you want to "
+                                + "start another transaction?");
+                        if(option == JOptionPane.YES_OPTION) {
+                            new PersonalDetailsForm().runPersonalDetailsForm();
+                        }
+                        else {
+                            System.exit(0);
+                        }
+                    }
+                } else {
+                    int option = JOptionPane.showConfirmDialog(null,"Transaction Failed to Save to Database - "       
+                            + "Data Validation Failure. Do you want to try again?");
                     if(option == JOptionPane.YES_OPTION) {
                         new PersonalDetailsForm().runPersonalDetailsForm();
-                    }
-                    else {
-                        System.exit(0);       
+                    } else {
+                        System.exit(0);
                     }
                 }
-            }
-            else {
-                int option = JOptionPane.showConfirmDialog(null,"Transaction Failed to Save to Database - "
-                        + "Do you want to try again");
-                if(option == JOptionPane.YES_OPTION) {
-                    new PersonalDetailsForm().runPersonalDetailsForm();
-                }
-                else {
-                    System.exit(0);       
-                }   
+            } catch (SQLException sql) {
+                JOptionPane.showMessageDialog(null, "Something went wrong with checking for duplicates from the database."
+                   + "\nDetails are: "+sql.getLocalizedMessage(), "System Notice", JOptionPane.INFORMATION_MESSAGE);
+                Logger.getLogger(ContactDetailsForm.class.getName()).log(Level.SEVERE, null, sql);   
             }
         }
     }
