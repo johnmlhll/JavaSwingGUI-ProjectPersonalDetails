@@ -46,9 +46,15 @@ public class PersonalDetailsForm extends JFrame implements ActionListener {
     private JButton btnSearch;
     private JButton btnClear;
     //frame
-    private JFrame framePersonalDetails;
+    public JFrame framePersonalDetails;
     //input vars
     private String dbQueryVar;
+    /*
+     * Getters & Setters
+     */
+    public JButton getBtnSubmit() {
+        return btnSubmit;
+    }
     /*
      * Noargs constructor with GUI declaration and configuration
      */
@@ -215,24 +221,30 @@ public class PersonalDetailsForm extends JFrame implements ActionListener {
         else if(ae.getSource() == btnAddRecord) {
             new ContactDetailsForm().runContactForm();
             framePersonalDetails.dispatchEvent(new WindowEvent(framePersonalDetails, WindowEvent.WINDOW_LOST_FOCUS));
+            framePersonalDetails.dispose();
         }
         else if(ae.getSource() == btnExit) {
             int option = JOptionPane.showConfirmDialog(null, "Do you wish to exit?");
-            if(option == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            }
-            else if(option == JOptionPane.NO_OPTION) {
-                JOptionPane.showMessageDialog(null, "No problem, you can work away on the application again", 
-                        "System Notice", JOptionPane.INFORMATION_MESSAGE);
-            }
-            else if(option == JOptionPane.CANCEL_OPTION) {
-                JOptionPane.showMessageDialog(null, "Exit request cancelled"
-                        + "", "System Notice", JOptionPane.INFORMATION_MESSAGE);
+            switch (option) {
+                case JOptionPane.YES_OPTION:
+                    System.exit(0);
+                case JOptionPane.NO_OPTION:
+                    JOptionPane.showMessageDialog(null, "No problem, you can work away on the application again",
+                            "System Notice", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                    JOptionPane.showMessageDialog(null, "Exit request cancelled"
+                            + "", "System Notice", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+                default:
+                    framePersonalDetails.dispose();
+                    runPersonalDetailsForm();
+                    break;
             }
         }
         else if(ae.getSource() == btnSearch) {
             dbQueryVar = JOptionPane.showInputDialog(null, "Please Enter the Last/Family Name you wish to search for");
-            new RecordDisplay(dbQueryVar);
+            new RecordDisplay().runRecordDisplay(dbQueryVar);
             framePersonalDetails.dispatchEvent(new WindowEvent(framePersonalDetails, WindowEvent.WINDOW_LOST_FOCUS));
         }
         else if(ae.getSource() == btnClear) {

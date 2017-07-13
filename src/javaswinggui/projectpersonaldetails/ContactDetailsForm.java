@@ -82,8 +82,8 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
             pnlPersonalDetails.add(new JLabel("Country "));
             pnlPersonalDetails.add(new JLabel(formDetailsList.get(8)));     
         } catch(NullPointerException ne) {
-                JOptionPane.showMessageDialog(null, "Error: No Data Inputted, Exiting Application..."
-                        + "", "System Notice", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Error: No Data Inputted, Exiting Application...", 
+                        "System Notice", JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
         }
         //new fields for entry (modular form)
@@ -144,6 +144,7 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
             new PersonalDetailsForm().runPersonalDetailsForm();
             formDetailsList.clear();
             frameContactDetails.dispatchEvent(new WindowEvent(frameContactDetails, WindowEvent.WINDOW_LOST_FOCUS));
+            frameContactDetails.dispose();
         } else if(ap.getSource() == btnExit) {
             System.exit(0);
         } else if(ap.getSource() == btnSave) {
@@ -199,8 +200,9 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
                         //New Entry or Exit dialog to complete progam cycle
                         int option = JOptionPane.showConfirmDialog(null,"Transaction Completed - Do you want to "
                                 + "start another transaction?");
-                        if(option == JOptionPane.YES_OPTION) {
+                        if(option == JOptionPane.YES_OPTION || option == JOptionPane.CANCEL_OPTION) {
                             new PersonalDetailsForm().runPersonalDetailsForm();
+                            frameContactDetails.dispose();
                         }
                         else {
                             System.exit(0);
@@ -211,6 +213,7 @@ public class ContactDetailsForm extends PersonalDetailsForm implements ActionLis
                             + "Data Validation Failure. Do you want to try again?");
                     if(option == JOptionPane.YES_OPTION) {
                         new PersonalDetailsForm().runPersonalDetailsForm();
+                        frameContactDetails.dispose();
                     } else {
                         System.exit(0);
                     }

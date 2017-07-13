@@ -32,12 +32,16 @@ public class RecordDisplay extends JFrame implements ActionListener {
     JButton btnBack;
     JFrame displayFrame;
     /*
-     * No-args and Overloaded constructor initialising the class and processing
+     * No-args constructor initialising the class and processing
      * the display of read only results 
      */
     public RecordDisplay() {}
-    public RecordDisplay(String lastName) {
-        //declare local process objects
+    
+    /*
+     * Method 1 - Displays record display/results
+     */
+    public void runRecordDisplay(String lastName) {
+            //declare local process objects
         JTable recordTable;
         JPanel pnlTable;
         JPanel pnlParent;
@@ -102,7 +106,7 @@ public class RecordDisplay extends JFrame implements ActionListener {
         }
     }
     /*
-     * Method 1 - Event Listener for btnBack button
+     * Method 2 - Event Listener for btnBack button
      */
     @Override
     public void actionPerformed(ActionEvent ba) {

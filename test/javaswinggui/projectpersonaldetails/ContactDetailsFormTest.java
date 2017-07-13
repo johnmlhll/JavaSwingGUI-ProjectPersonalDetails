@@ -1,6 +1,5 @@
 package javaswinggui.projectpersonaldetails;
 
-import java.awt.event.ActionEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -106,9 +105,10 @@ public class ContactDetailsFormTest {
         }
     }
     /**
-     * Test 4 - Test of runContactForm method, of class ContactDetailsForm.
+     * Test 4 - Test of runContactForm method, of class ContactDetailsForm. 
+     * NullPointerException handled in the live method with try-catch.
      */
-    @Test
+    @Test (expected = IndexOutOfBoundsException.class) 
     public void testRunContactForm() {
         String message = "formDetailsList List is null";
         //routine
@@ -117,6 +117,9 @@ public class ContactDetailsFormTest {
         instance.runContactForm();
         assertNotNull(message, formDetailsList); //checks arraylist is not null when method is run
         assertNotNull(this); 
+        //check exception handling
+        formDetailsList.clear();
+        instance.runContactForm();
     }
     /*
      * After Class Test Method
