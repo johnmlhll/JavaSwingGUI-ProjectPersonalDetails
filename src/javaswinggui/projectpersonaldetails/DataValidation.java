@@ -65,7 +65,7 @@ public class DataValidation {
         boolean isValidEmail = false;
         String emailRegex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
             + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        if(emailField.matches(emailRegex) && emailField.length() < 23) {
+        if(emailField.matches(emailRegex) && emailField.length() < 60) {
             isValidEmail = true;
         }
         return isValidEmail;

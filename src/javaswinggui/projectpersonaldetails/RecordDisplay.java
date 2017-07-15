@@ -111,7 +111,7 @@ public class RecordDisplay extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ba) {
         if(ba.getSource() == btnBack) {
-            new PersonalDetailsForm();
+            new PersonalDetailsForm().runPersonalDetailsForm();
             displayFrame.dispose();
         }
     }

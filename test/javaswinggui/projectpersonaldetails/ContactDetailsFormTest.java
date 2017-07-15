@@ -47,8 +47,8 @@ public class ContactDetailsFormTest {
     public void testGetBadRecord() {
         System.out.println("Test 2 - getBadRecord");
         ContactDetailsForm instance = new ContactDetailsForm();
-        boolean expResult = false;
         boolean result = instance.getBadRecord();
+        boolean expResult = false;
         assertEquals(expResult, result);
     }
 
@@ -57,17 +57,19 @@ public class ContactDetailsFormTest {
      */
     @Test
     public void testActionPerformed() {
+        System.out.println("Test 3 - actionPerformed");
         //declare vars
         boolean actualResult = false;
         ResultSet result = null;
         int recordId = 0;
-        System.out.println("Test 3 - actionPerformed");
+        
         //part 1 - test entry state of frame and in mem list 
         ContactDetailsForm instance = new ContactDetailsForm();
         //ensure class frame is null pre event firing for contacts
         assertNull("Contact Form Frame is not null pre event", instance.frameContactDetails);
         //ensure form list is populated carrying data into the class process method for the event 
         assertNotNull("formDetailsList List is null", PersonalDetailsForm.formDetailsList);
+        
         //part 2 test erroneous data additions to the in memory List used for saving records
         DataProcessing dataProcessing = new DataProcessing();
         formDetailsList.add(0, "Test");
@@ -85,11 +87,12 @@ public class ContactDetailsFormTest {
         formDetailsList.add(12, "@testcase");
         formDetailsList.add(13, "@twitter");
         formDetailsList.add(14, "Pending");
-        //run loaded list through method to DB
-        assertNotNull("formDetailsList List is null", PersonalDetailsForm.formDetailsList);
         instance.runContactForm();
         result = dataProcessing.getRecordFromDB("Case");
         try {
+            //run loaded list through method to DB
+            assertNotNull("formDetailsList List is null", PersonalDetailsForm.formDetailsList);
+            assertFalse(result.isFirst()); //tests if the result has a first column return (recordid)
             if(result.isFirst()) { //if test case made it to db - if statement deletes the entry
                 actualResult = true;
                 result.close();
@@ -98,7 +101,6 @@ public class ContactDetailsFormTest {
                 boolean deletedRecord = dataProcessing.deleteRecord(recordId);
                 System.out.println("Test Record Success Outcome (insert/delete from DB): "+deletedRecord);
             }
-            assertFalse(result.isFirst()); //tests if the result has a first column return (recordid)
         } catch (SQLException ex) {
             System.out.println("DB Error retrieving record (testRunContactForm()): \n"+ex.getLocalizedMessage());
             Logger.getLogger(ContactDetailsFormTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -115,11 +117,11 @@ public class ContactDetailsFormTest {
         System.out.println("Test 4 - runContactForm");
         ContactDetailsForm instance = new ContactDetailsForm();
         instance.runContactForm();
-        assertNotNull(message, formDetailsList); //checks arraylist is not null when method is run
-        assertNotNull(this); 
-        //check exception handling
+        //check exception handling - run it again
         formDetailsList.clear();
         instance.runContactForm();
+        assertNotNull(message, formDetailsList); //checks arraylist is not null when method is run
+        assertNotNull(this); 
     }
     /*
      * After Class Test Method
